@@ -25,3 +25,5 @@ int main() {
     }
     cerr << "\nDone.\n";
 }
+
+//just goofing around and testing irfanView for multiplle values of width and height
