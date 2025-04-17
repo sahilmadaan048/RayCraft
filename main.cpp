@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include<iostream>
 using namespace std;
 
 int main() {
@@ -11,6 +11,7 @@ int main() {
     cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
     for(int i = image_height-1; i>=0; i--) {
+        clog << "\rScanliness remaining: " << (image_height - i) << flush;
         for(int j=0; j<image_width; j++) {
             auto r = double(i) / (image_height - 1);
             auto g = double(j) / (image_height - 1);
