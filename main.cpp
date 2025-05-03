@@ -93,3 +93,5 @@ int main()
 
     std::clog << "\rDone.                 \n";
 }
+
+//camera maths revised
