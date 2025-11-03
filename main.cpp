@@ -1,43 +1,50 @@
 #include "color.h"
 #include "ray.h"
 #include "vec3.h"
+#include "interval.h"
 
 #include <iostream>
 
-//this function checks if a ray r hits a sphere defined by
-    //center: the center of the spahere
-    //radius: the radius of the sphere
-double hit_sphere(const point3& center, double radius, const ray& r) {
+//  this function checks if a ray r hits a sphere defined by
+// center: the center of the spahere
+// radius: the radius of the sphere
+double hit_sphere(const point3 &center, double radius, const ray &r)
+{
     vec3 oc = center - r.origin();
     auto a = r.direction().length_squared();
     auto h = dot(r.direction(), oc);
-    auto c = oc.length_squared() - radius*radius;
-    auto discriminant = h*h - a*c;
-    
-    //no point of intersecrion
-    if (discriminant < 0) {
+    auto c = oc.length_squared() - radius * radius;
+    auto discriminant = h * h - a * c;
+
+    // no point of intersecrion
+    if (discriminant < 0)
+    {
         return -1.0;
-    } else {
-        //closest intersection point
+    }
+    else
+    {
+        // closest intersection point
         return (h - std::sqrt(discriminant)) / a;
     }
 }
 
-//this function determines the color seen in the direction of ray r
-color ray_color(const ray& r) {
-    auto t = hit_sphere(point3(0,0,-1), 0.5, r);
-    //if ray hits the sphere
-    if (t > 0.0) {
-        //r.at() is the hit point
-        //vec3(0, 0, -1) is the center of the sphere
-        vec3 N = unit_vector(r.at(t) - vec3(0,0,-1));
-        return 0.5*color(N.x()+1, N.y()+1, N.z()+1);
+// this function determines the color seen in the direction of ray r
+color ray_color(const ray &r)
+{
+    auto t = hit_sphere(point3(0, 0, -1), 0.5, r);
+    // if ray hits the sphere
+    if (t > 0.0)
+    {
+        // r.at() is the hit point
+        // vec3(0, 0, -1) is the center of the sphere
+        vec3 N = unit_vector(r.at(t) - vec3(0, 0, -1));
+        return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
     }
 
-    //if it misses the sphere
+    // if it misses the sphere
     vec3 unit_direction = unit_vector(r.direction());
-    auto a = 0.5*(unit_direction.y() + 1.0);
-    return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
+    auto a = 0.5 * (unit_direction.y() + 1.0);
+    return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
 }
 
 int main()
@@ -52,7 +59,6 @@ int main()
     int image_height = int(image_width / aspect_ratio);
     image_height = (image_height < 1) ? 1 : image_height;
 
-    
     // Camera
 
     auto focal_length = 1.0;
@@ -74,6 +80,11 @@ int main()
     auto pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
     // Render
+    /*
+        Prints progress info (how many scanlines are left).
+        Uses \r to overwrite the same line in the terminal.
+        std::clog (instead of std::cout) means it writes to the error stream, so it won’t mix with the actual image data being written to stdout
+    */
 
     std::cout << "P3\n"
               << image_width << " " << image_height << "\n255\n";
@@ -94,5 +105,3 @@ int main()
 
     std::clog << "\rDone.                 \n";
 }
-
-//camera maths revised
