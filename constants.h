@@ -37,16 +37,15 @@ inline double random_double(double min, double max)
     return min + (max - min) * random_double();
 }
 
-
 // Commmon Headers
 
-// put it on end other wise inline functions defined in this file won't get recognised in the 
+// put it on end other wise inline functions defined in this file won't get recognised in the
 // common headers included below
 
+#include "camera.h"
 #include "color.h"
 #include "interval.h"
 #include "ray.h"
 #include "vec3.h"
-
 
 #endif
