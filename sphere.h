@@ -9,6 +9,9 @@
 
 #include "hittable.h"
 #include "constants.h"
+#include "ray.h"
+#include "vec3.h"
+#include "color.h"
 
 /**
  * @class sphere
@@ -30,8 +33,9 @@ public:
    * @param radius - radius of the sphere
    *
    */
-  sphere(const point3 &center, double radius) : center(center), radius(std::fmax(0, radius)) {}
-
+  sphere(const point3 &center, double radius, shared_ptr<material> mat)
+      : center(center), radius(std::fmax(0, radius)), mat(mat) {}
+      
   /**
    * @brief Determines if a ray hits the sphere within a valid range
    * @param r the input ray
@@ -69,7 +73,7 @@ public:
     rec.normal = (rec.p - center) / radius;
     vec3 outward_normal = (rec.p - center) / radius;
     rec.set_face_normal(r, outward_normal);
-    // rec.mat = mat;
+    rec.mat = mat;
 
     return true;
   }
@@ -77,6 +81,7 @@ public:
 private:
   point3 center; // <- the center of the sphere
   double radius; // <- the radius of the sphere
+  shared_ptr<material> mat;
 };
 
 #endif

@@ -2,9 +2,7 @@
 #define CAMERA_H
 
 #include "hittable.h"
-#include "constants.h"
-#include "color.h"
-
+#include "material.h"
 class camera
 {
 public:
@@ -12,7 +10,7 @@ public:
     int image_width = 100;      // Rendered image width in pixel count
     int samples_per_pixel = 10; // Count pf random samples for each pixel
     int max_depth = 10;         // Maximum number of ray bounces into scene
-        
+
     void render(const hittable &world)
     {
         initialize();
@@ -99,16 +97,22 @@ private:
     {
         // base condition
         // if we have exceeded the max ray bounce limit, no more light is gethered
-        if(depth <= 0) {
+        if (depth <= 0)
+        {
             return color(0, 0, 0);
         }
 
         hit_record rec;
+
         if (world.hit(r, interval(0.001, infinity), rec))
         {
-            vec3 direction = random_on_hemisphere(rec.normal);
-            vec3 direction2 = rec.normal + random_unit_vector();  // True Lambertian Reflection
-            return 0.5 * ray_color(ray(rec.p, direction2), depth - 1, world);
+            ray scattered;
+            color attenuation;
+            if (rec.mat->scatter(r, rec, attenuation, scattered))
+            {
+                return attenuation * ray_color(scattered, depth - 1, world);
+            }
+            return color(0, 0, 0);
         }
 
         vec3 unit_direction = unit_vector(r.direction());

@@ -15,8 +15,11 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include "constants.h"
 #include "ray.h"
 #include "interval.h"
+
+class material;
 
 /**
  * @class hit-record
@@ -39,7 +42,8 @@ public:
   /** @brief The ray parameter (distance along the ray) where the hit occured */
   double t;
 
-  
+  shared_ptr<material> mat;
+
   bool front_face;
 
   void set_face_normal(const ray &r, const vec3 &outward_normal)
