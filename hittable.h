@@ -16,6 +16,7 @@
 #define HITTABLE_H
 
 #include "ray.h"
+#include "interval.h"
 
 /**
  * @class hit-record
@@ -37,6 +38,18 @@ public:
 
   /** @brief The ray parameter (distance along the ray) where the hit occured */
   double t;
+
+  
+  bool front_face;
+
+  void set_face_normal(const ray &r, const vec3 &outward_normal)
+  {
+    // Sets the hit record normal vector.
+    // NOTE: the parameter `outward_normal` is assumed to have unit length.
+
+    front_face = dot(r.direction(), outward_normal) < 0;
+    normal = front_face ? outward_normal : -outward_normal;
+  }
 };
 
 /**
@@ -64,7 +77,7 @@ public:
    *
    * @note This is a pure virtual function and must be overridden in all derived classes.
    */
-  virtual bool hit(const ray &r, double ray_tmin, double ray_tmax, hit_record &rec) const = 0;
+  virtual bool hit(const ray &r, interval ray_t, hit_record &rec) const = 0;
 };
 
 #endif

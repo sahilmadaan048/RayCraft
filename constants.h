@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <ostream>
 #include <limits>
 #include <memory>
 
@@ -14,7 +15,7 @@ using std::shared_ptr;
 
 // constants
 
-// const double infinity = std::numeric_limits<double>::infinity();
+const double infinity = std::numeric_limits<double>::infinity();
 const double pi = 3.1415926535897932385;
 
 // Utility Functions
@@ -36,12 +37,16 @@ inline double random_double(double min, double max)
     return min + (max - min) * random_double();
 }
 
-// common headers
 
-// #include <color.h>
-// #include <interval.h>
-// #include <ray.h>
-// #include <vec3.h>
+// Commmon Headers
+
+// put it on end other wise inline functions defined in this file won't get recognised in the 
+// common headers included below
+
+#include "color.h"
+#include "interval.h"
+#include "ray.h"
+#include "vec3.h"
 
 
 #endif

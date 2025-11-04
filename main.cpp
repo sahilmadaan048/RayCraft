@@ -1,15 +1,13 @@
-#include "color.h"
-#include "ray.h"
-#include "vec3.h"
-#include "interval.h"
-
-#include <iostream>
+#include "constants.h"
+#include "hittable.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
 // this function checks if a ray r hits a sphere defined by
 // center: the center of the spahere
 // radius: the radius of the sphere
 /*
-    this formula comes on solving the equation of intersection of 
+    this formula comes on solving the equation of intersection of
     the incident ray and the sphere
 
     basically all this calculation is needed to find the nearesr point of intersetion of the incident
@@ -31,34 +29,39 @@ double hit_sphere(const point3 &center, double radius, const ray &r)
     else
     {
         // closest intersection point
-        return (h - std::sqrt(discriminant)) / a;   
+        return (h - std::sqrt(discriminant)) / a;
     }
 }
 
 // this function determines the color seen in the direction of ray r
-color ray_color(const ray &r)
+color ray_color(const ray &r, const hittable &world)
 {
-    /* 
+    /*
         since the camera center is at (0, 0, 0) the sphere center is 1 (focal length) away into  the z axis
         0.5 is the radius of the sphere we have assumed
         r is the incident ray which may intersect the sphere we have deinfed with center (0, 0, -1)
     */
-    auto t = hit_sphere(point3(0, 0, -1), 0.5, r);
+    // auto t = hit_sphere(point3(0, 0, -1), 0.5, r);
     // if ray hits the sphere
-    if (t > 0.0)
-    {
-        // r.at() is the hit point
-        // vec3(0, 0, -1) is the center of the sphere
-        vec3 N = unit_vector(r.at(t) - vec3(0, 0, -1));
-        return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
-    }
+    // if (t > 0.0)
+    // {
+    //     // r.at() is the hit point
+    //     // vec3(0, 0, -1) is the center of the sphere
+    //     vec3 N = unit_vector(r.at(t) - vec3(0, 0, -1));
+    //     return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
+    // }
 
+    hit_record rec;
+    if (world.hit(r, interval(0.001, infinity), rec))
+    {
+        return 0.5 * (rec.normal + color(1, 1, 1));
+    }
     // else it misses the sphere
 
     /*
         formula used to create the gradient from Blue color to White
         blendedValue=(1−a)⋅startValue+a⋅endValue
-    */
+        */
 
     vec3 unit_direction = unit_vector(r.direction());
     auto a = 0.5 * (unit_direction.y() + 1.0);
@@ -87,6 +90,14 @@ int main()
 
     int image_height = int(image_width / aspect_ratio);
     image_height = (image_height < 1) ? 1 : image_height;
+
+    // World
+
+    hittable_list world;
+
+    world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
+    world.add(make_shared<sphere>(point3(-2, 0, -1), 0.3));
+    world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
 
     // Camera
 
@@ -144,7 +155,7 @@ int main()
             auto ray_direction = pixel_center - camera_center;
             ray r(camera_center, ray_direction);
 
-            color pixel_color = ray_color(r);
+            color pixel_color = ray_color(r, world);
             write_color(std::cout, pixel_color);
         }
     }
