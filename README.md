@@ -1,13 +1,17 @@
-# 🌌 RayCraft — A C++ Ray Tracer
+# RayCraft — A simple C++ Ray Tracer
 
-![Rendered Scene](images/1.png)
+<p align="center">
+  <img src="images/1.png" width="500" height="300">
+  <br>
+  <em>Final render</em>
+</p>
 
 **RayCraft** is a physically based ray tracer built entirely from scratch in C++ by following _Peter Shirley’s_ legendary **“Ray Tracing in One Weekend”** series.  
 It demonstrates the beauty of computer graphics by simulating light transport with recursive ray tracing and materials that scatter, reflect, and refract light realistically.
 
 ---
 
-## 🚀 Features
+## Features
 
 - Custom vector and ray math library (`vec3.h`, `ray.h`)
 - Modular scene construction via `hittable` and `hittable_list`
@@ -23,7 +27,7 @@ It demonstrates the beauty of computer graphics by simulating light transport wi
 
 ---
 
-## 🧠 Ray Tracing Concept
+## Ray Tracing Concept
 
 Ray tracing works by tracing light backward — from the **camera** through each **pixel** into the **scene**.  
 Each ray either hits an object (where material physics are simulated) or returns a background color.
@@ -40,9 +44,9 @@ where `t` controls how far the ray travels, producing smooth color gradients and
 
 ---
 
-## ⚙️ Build & Run Instructions
+## Build & Run Instructions
 
-### 🧩 Prerequisites
+### Prerequisites
 
 - C++17 or later
 - Any standard compiler:
@@ -50,7 +54,7 @@ where `t` controls how far the ray travels, producing smooth color gradients and
   - **Windows:** MinGW / MSVC
   - **Linux / macOS:** `g++` or `clang++`
 
-### 🧱 Clone the Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/sahilmadaan048/RayCraft.git
@@ -59,7 +63,7 @@ cd RayCraft
 
 ---
 
-### ▶️ Run Using Bash Script (Windows Compatible)
+### Run Using Bash Script (Windows Compatible)
 
 You can use the following bash script to compile and run the ray tracer easily (works with Git Bash or WSL):
 
@@ -67,6 +71,7 @@ You can use the following bash script to compile and run the ray tracer easily (
 #!/bin/bash
 
 echo "🔧 Compiling..."
+cd src/
 g++ main.cpp -o main || exit 1
 
 echo "🎯 Running ray tracer..."
@@ -88,7 +93,7 @@ bash run.sh
 
 ---
 
-### 🧱 Manual Build (Alternative)
+### Manual Build (Alternative)
 
 ```bash
 g++ -std=c++17 -O2 main.cpp -o raycraft
@@ -101,23 +106,35 @@ You can then convert the `.ppm` file to `.png` using **ImageMagick**:
 magick image.ppm images/image.png
 ```
 
-## 🖼️ Sample Output
+## Sample Output
 
 Here’s the final rendered image from RayCraft:
 
-![Rendered Scene](images/2.png)
+<p align="center">
+  <img src="images/2.png" width="500" height="300">
+  <br>
+</p>
 
-![Rendered Scene](images/3.png)
+<p align="center">
+  <img src="images/3.png" width="500" height="300">
+  <br>
+</p>
 
-![Rendered Scene](images/4.png)
+<p align="center">
+  <img src="images/4.png" width="500" height="300">
+  <br>
+</p>
 
-![Rendered Scene](images/5.png)
+<p align="center">
+  <img src="images/5.png" width="500" height="300">
+  <br>
+</p>
 
 ---
 
-## 🔍 Key Implementation Highlights
+## Key Implementation Highlights
 
-### 📘 Diffuse Material (Lambertian)
+### Diffuse Material (Lambertian)
 
 ```cpp
 bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override {
@@ -128,14 +145,14 @@ bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& sc
 }
 ```
 
-### 🔮 Metallic Reflection
+### Metallic Reflection
 
 ```cpp
 vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal);
 scattered = ray(rec.p, reflected + fuzz * random_in_unit_sphere());
 ```
 
-### 💎 Dielectric (Refraction / Glass)
+### Dielectric (Refraction / Glass)
 
 ```cpp
 double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
@@ -145,14 +162,14 @@ scattered = ray(rec.p, direction);
 
 ---
 
-## 📚 References
+## References
 
 - 📖 _Ray Tracing in One Weekend_ by **Peter Shirley**
 - 🌐 [https://raytracing.github.io/books/RayTracingInOneWeekend.html](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
 
 ---
 
-## 👨‍💻 Learner / Author
+## Learner / Author
 
 **Sahil Madaan** [GitHub](https://github.com/sahilmadaan048)
 

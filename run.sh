@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "🔧 Compiling..."
+cd src/
 g++ main.cpp -o main || exit 1
 
 echo "🎯 Running ray tracer..."
