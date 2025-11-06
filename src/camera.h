@@ -1,3 +1,18 @@
+/**
+ * @file camera.h
+ * @brief defines the camera class for ray generation and scene rendering
+ *
+ * the camera simulates real world optics - including field of view, focus diatance,
+ * and defocus blur - to generate rays that traverse the scena dna produce an image
+ *
+ * it supports:
+ *  - adjustable aspect ratio and image resolution
+ *  - depth of field (defocus blur) simulation
+ *  - anti aliasing via multiple sample per pixel
+ *  - recursive ray tracing with material scattering
+ *
+ */
+
 #ifndef CAMERA_H
 #define CAMERA_H
 
@@ -19,6 +34,14 @@ public:
     double defocus_angle = 0; // Variation angle of rays through each pixel
     double focus_dist = 10;   // Distance from camera lookfrom point to plane of perfect focus
 
+    /**
+     * @brief Renders the scene (world) from the camera's viewpoint
+     *
+     * for each pixel, multiple rays are sampled to reduce aliasing
+     * the result is written as a PPM image to the standard output
+     *
+     * @param world the hittable scene to be rendered
+     */
     void render(const hittable &world)
     {
         initialize();
@@ -55,6 +78,7 @@ private:
     vec3 defocus_disk_u;        // Defocus disk horizontal radius
     vec3 defocus_disk_v;        // Defocus disk vertical radius
 
+    /** Iniitialises camera geometry and coordinate frame before rendering.  */
     void initialize()
     {
         image_height = int(image_width / aspect_ratio);
@@ -94,11 +118,11 @@ private:
         defocus_disk_v = v * defocus_radius;
     }
 
+    /** Gneerates a ray passing through pixel (i, j)  with random subpixel sampling */
     ray get_ray(int i, int j) const
     {
         // construct a camera ray originating from the origin and directed at randomly sampled
         // points around the pixel location at i, j
-
         auto offset = sample_square();
         auto pixel_sample = pixel00_loc + ((i + offset.x()) * pixel_delta_u) + ((j + offset.y()) * pixel_delta_v);
 
@@ -108,12 +132,14 @@ private:
         return ray(ray_origin, ray_direction);
     }
 
+    /** Returns a random 2D offset within the unit square [-0.5, 0.5] × [-0.5, 0.5]. */
     vec3 sample_square() const
     {
         // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
         return vec3(random_double() - 0.5, random_double() - 0.5, 0);
     }
 
+    /** Returns a random point on the lens' defoucs disk for depth of field blur */
     point3 defocus_disk_sample() const
     {
         // Returns a random point in the camera defocus disk.
@@ -121,6 +147,18 @@ private:
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
+    /**
+     * @brief recusively computes the color constribution for a ray
+     *
+     * Each hit triggers a material scatter, recursion depth limits total bounces
+     * if the ray hits nothing, it returns a smooth gradienc background
+     *
+     * @param r Incoming ray
+     * @param depth remaining recursion depth
+     * @param wofld scene containing all hittable objects
+     * @return The resulting color for the ray
+     *
+     */
     // this function determines the color seen in the direction of ray r
     color ray_color(const ray &r, int depth, const hittable &world) const
     {
@@ -143,7 +181,7 @@ private:
             }
             return color(0, 0, 0);
         }
-
+        // Background gradient
         vec3 unit_direction = unit_vector(r.direction());
         auto a = 0.5 * (unit_direction.y() + 1.0);
         return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
